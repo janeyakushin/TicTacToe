@@ -53,7 +53,6 @@ public class GameController {
     public List<Player> getRating () {
         try {
             List<Player> players = field.getRating();
-            players.forEach(player -> System.out.println(player));
             return field.getRating();
         } catch (IOException e) {
             return null;

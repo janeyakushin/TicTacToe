@@ -10,6 +10,12 @@ angular.module('gameplay', ['ngStorage']).controller('indexController', function
         $scope.gameslist = null;
     };
 
+    $scope.newgameplay = function () {
+        $scope.newgame();
+        $scope.name1 = "";
+        $scope.name2 = "";
+    };
+
     $scope.newgame();
 
     $scope.setPlayers = function () {
