@@ -1,0 +1,186 @@
+<!doctype html>
+
+<html ng-app="gameplay">
+
+<head>
+    <meta charset="utf-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.0/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ngStorage/0.3.11/ngStorage.min.js"></script>
+    <script src="index.js"></script>
+    <style>
+        .game_button {
+            width: 90px;
+            height: 90px;
+        }
+    </style>
+    <title>Крестики-нолики</title>
+</head>
+<body>
+
+<div class="container" ng-controller="indexController">
+
+    <form ng-submit="setPlayers()">
+
+        <table class="table table-hover">
+            <tr>
+                <td><h3>Игрок 1 -> </h3></td>
+                <td ng-show="auth">
+                    <input class="form-control" type="text" placeholder="Имя" ng-model="name1">
+                </td>
+                <td ng-show="!auth">
+                    <h4>{{name1}}</h4>
+                </td>
+                <td ng-show="!auth">
+                    <h5>Символ: {{symbols[0]}}</h5>
+                </td>
+                <td><h3>Игрок 2 -> </h3></td>
+                <td ng-show="auth">
+                    <input class="form-control" type="text" placeholder="Имя" ng-model="name2">
+                </td>
+                <td ng-show="!auth">
+                    <h4>{{name2}}</h4>
+                </td>
+                <td ng-show="!auth">
+                    <h5>Символ: {{symbols[1]}}</h5>
+                </td>
+                <td ng-show="auth">
+                    <button ng-show="!gameok" type="submit" class="btn btn-primary">Отправить</button>
+                </td>
+            </tr>
+         </table>
+    </form>
+
+    <div ng-show="!gameok">
+        <button class="btn btn-primary" ng-show="auth" ng-click="playgame()">Просмотр игр</button>
+        <table ng-show="auth" class="table table-hover">
+            <tbody>
+            <tr ng-repeat="game in gameslist">
+                <td>
+                    <button class="btn btn-primary" ng-click="gameforplay(game)">{{game}}</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3 ng-show="gameok">ИГРА!!!</h3>
+
+    <table ng-show="gameok">
+        <tr>
+            <td>
+                <button class="game_button">{{field[0][0]}}</button>
+            </td>
+            <td>
+                <button class="game_button">{{field[0][1]}}</button>
+            </td>
+            <td>
+                <button class="game_button">{{field[0][2]}}</button>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button class="game_button">{{field[1][0]}}</button>
+            </td>
+            <td>
+                <button class="game_button">{{field[1][1]}}</button>
+            </td>
+            <td>
+                <button class="game_button">{{field[1][2]}}</button>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button class="game_button">{{field[2][0]}}</button>
+            </td>
+            <td>
+                <button class="game_button">{{field[2][1]}}</button>
+            </td>
+            <td>
+                <button class="game_button">{{field[2][2]}}</button>
+            </td>
+        </tr>
+    </table>
+    <table ng-show="gameok">
+        <tr>
+           <td>
+                Шаг {{step}}
+            </td>
+            <td>
+                <button class="btn btn-primary" ng-show="nextstep" ng-click="tostep(1)">Шаг вперед</button>
+            </td>
+        </tr>
+    </table>
+
+
+
+
+
+    <h3 ng-show="!auth">ХОД ИГРОКА: {{name}}</h3>
+
+    <table ng-show="!auth">
+        <tr>
+            <td>
+                <button class="game_button" ng-click="setStep(1, 1)">{{field[0][0]}}</button>
+            </td>
+             <td>
+                <button class="game_button" ng-click="setStep(1, 2)">{{field[0][1]}}</button>
+            </td>
+             <td>
+                <button class="game_button" ng-click="setStep(1, 3)">{{field[0][2]}}</button>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button class="game_button" ng-click="setStep(2, 1)">{{field[1][0]}}</button>
+            </td>
+             <td>
+                <button class="game_button" ng-click="setStep(2, 2)">{{field[1][1]}}</button>
+            </td>
+             <td>
+                <button class="game_button" ng-click="setStep(2, 3)">{{field[1][2]}}</button>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button class="game_button" ng-click="setStep(3, 1)">{{field[2][0]}}</button>
+            </td>
+             <td>
+                <button class="game_button" ng-click="setStep(3, 2)">{{field[2][1]}}</button>
+            </td>
+             <td>
+                <button class="game_button" ng-click="setStep(3, 3)">{{field[2][2]}}</button>
+            </td>
+        </tr>
+    </table>
+
+    <h3 ng-show="win">ПОБЕДИЛ: {{win_player}}</h3>
+    <h3 ng-show="deadHeat">НИЧЬЯ!!!</h3>
+    <button class="btn btn-primary" ng-show="win" ng-click="newgame()">Новая игра</button>
+    <button class="btn btn-primary" ng-show="deadHeat" ng-click="newgame()">Новая игра</button>
+    <button class="btn btn-primary" ng-show="!nextstep" ng-click="newgame()">Новая игра</button>
+
+
+    <table ng-show="win" class="table table-hover">
+        <tr>
+            <td><h5>Игрок</h5></td>
+            <td><h5>Рейтинг</h5></td>
+        </tr>
+        <tbody>
+        <tr ng-repeat="rat in rating">
+            <td>{{rat.name}}</td>
+            <td>{{rat.rating}}</td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+</body>
+
+</html>
