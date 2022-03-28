@@ -1,5 +1,7 @@
 package ru.yajaneya.tictactoe.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@Tag(name="API воспроизведения записанной игры 'Крестики-нолики'", description = "Методы работы с бэк-эндом воспроизведения записанной игры")
 public class PlayController {
     private Player player1;
     private Player player2;
@@ -22,17 +25,22 @@ public class PlayController {
     private Field field;
     private int step;
 
+    @Operation(summary = "Запрос на получение списка записанных игр")
     @GetMapping("/games")
     public List<String> getGames () {
         List<String> strings = new ArrayList<>();
         File folder = new File("./arhiv");
         File[] files = folder.listFiles();
+        if (files == null) {
+            return null;
+        }
         for (File file : files) {
             strings.add(file.getName());
         }
         return strings;
     }
 
+    @Operation(summary = "Запрос на инициализацию данных записанной игры")
     @GetMapping ("/game")
     public boolean getGame (@RequestParam String game) {
         ReaderParser readerParser = new HistoryFabric().getReadParser(); //устанавливается парсес чтения
@@ -49,6 +57,7 @@ public class PlayController {
         return true;
     }
 
+    @Operation(summary = "Запрос на получение имен игроков и символов, им соответствующих, из записанной игры")
     @GetMapping ("/game/players")
     public List<String> getPlayers () {
         List<String> players = new ArrayList<>();
@@ -57,12 +66,14 @@ public class PlayController {
         return players;
     }
 
+    @Operation(summary = "Запрос на получение пустого игрового поля")
     @GetMapping ("/game/init")
     public char[][] init () {
         field = new Field();
         return field.getField();
     }
 
+    @Operation(summary = "Запрос на получение поля, соответствующего определенному шагу игры")
     @GetMapping ("/game/step")
     public char[][] getStep (@RequestParam int step) {
         if (step > steps.size()) {

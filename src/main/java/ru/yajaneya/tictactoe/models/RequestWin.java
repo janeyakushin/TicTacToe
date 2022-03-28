@@ -1,7 +1,12 @@
 package ru.yajaneya.tictactoe.models;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Данные о завершении игры")
 public class RequestWin {
+    @Schema(description = "Данные о типе завершения: win - победа, deadHeat - ничья, do - в процессе игры", required = true, example = "do")
     public String data;
+    @Schema(description = "Имя победителя", example = "Василий")
     public String playerWin;
 
     public RequestWin() {

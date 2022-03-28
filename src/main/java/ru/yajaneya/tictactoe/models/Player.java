@@ -4,12 +4,19 @@
 
 package ru.yajaneya.tictactoe.models;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.util.Comparator;
 
+@Schema(description = "Модель игрока")
 public class Player {
+    @Schema(description = "ID игрока", required = true, example = "1")
     private int id; // идентификатор игрока
+    @Schema(description = "Имя игрока", required = true, example = "Василий")
     private String name; // имя игрока
+    @Schema(description = "Символ на игровом поле, соответствующий игроку", required = true, example = "X")
     private char symbol; // символ, который ставит игрок на поле
+    @Schema(description = "Рейтинг игрока в списке (используется при передаче рейтинга с сервера)", example = "3")
     private int rating; // рейтинг игрока -> отражает количество выигранных партий.
 
 

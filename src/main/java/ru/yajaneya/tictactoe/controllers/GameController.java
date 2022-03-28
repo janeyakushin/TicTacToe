@@ -1,35 +1,31 @@
 package ru.yajaneya.tictactoe.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 import ru.yajaneya.tictactoe.Parser.WriterParser;
 import ru.yajaneya.tictactoe.fabrics.HistoryFabric;
 import ru.yajaneya.tictactoe.models.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@Tag(name="API игры 'Крестики-нолики'", description = "Методы работы с бэк-эндом игры")
 public class GameController {
     private WriterParser writerParser;
     private Field field;
     private Player player1;
     private Player player2;
 
+    @Operation(summary = "Запрос на получение пустого игрового поля")
     @GetMapping
     public char[][] init () {
         field = new Field();
         return field.getField();
     }
 
-    @GetMapping ("/players")
-    public List<Player> getPlayers () {
-        List<Player> players = new ArrayList<>();
-        players.add(player1);
-        players.add(player2);
-        return players;
-    }
-
+    @Operation(summary = "Запрос на проверку выигрыша")
     @GetMapping ("/win")
     public RequestWin isWin () {
         if (field.win(player1)) {
@@ -49,6 +45,7 @@ public class GameController {
         return new RequestWin("do");
     }
 
+    @Operation(summary = "Запрос на получение рейтинга игроков")
     @GetMapping ("/rating")
     public List<Player> getRating () {
         try {
@@ -59,6 +56,7 @@ public class GameController {
         }
     }
 
+    @Operation(summary = "Запрос на отправку имён игроков")
     @PostMapping ("/players")
     public String [] setPlayers (@RequestParam String name1, @RequestParam String name2) {
        player1 = new Player(1, name1, 'X');
@@ -68,6 +66,7 @@ public class GameController {
        return symbols;
     }
 
+    @Operation(summary = "Запрос на отправку игрового хода игрока")
     @PostMapping ("/step")
     public char[][] setStep (@RequestParam String name, @RequestParam int x, @RequestParam int y) {
         Player player = getPlayerByName(name);
