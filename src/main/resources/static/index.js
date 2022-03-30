@@ -34,6 +34,12 @@ angular.module('gameplay', ['ngStorage']).controller('indexController', function
                 name2: $scope.name2,
             }
         }).then(function (response) {
+            if (response.data[0] == "double") {
+                alert("Выбирайте разные имена!");
+                $scope.name1 = "";
+                $scope.name2 = "";
+                return;
+            }
             $scope.auth = false;
             $scope.symbols = response.data;
             $scope.name = $scope.name1;
@@ -53,15 +59,10 @@ angular.module('gameplay', ['ngStorage']).controller('indexController', function
                 y: y
             }
         }).then(function (response) {
-            $scope.field = response.data;
+            $scope.field = response.data.field;
             isWin();
-        });
-
-        if ($scope.name == $scope.name2) {
-            $scope.name = $scope.name1;
-        } else {
-            $scope.name = $scope.name2;
-        }
+            $scope.name = response.data.stepPlayerName;
+       });
 
     };
 

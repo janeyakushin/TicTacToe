@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 import ru.yajaneya.tictactoe.Parser.WriterParser;
+import ru.yajaneya.tictactoe.dtos.StepDto;
 import ru.yajaneya.tictactoe.fabrics.HistoryFabric;
 import ru.yajaneya.tictactoe.models.*;
 
@@ -59,6 +60,9 @@ public class GameController {
     @Operation(summary = "Запрос на отправку имён игроков")
     @PostMapping ("/players")
     public String [] setPlayers (@RequestParam String name1, @RequestParam String name2) {
+       if (name1.equals(name2)) {
+           return new String[]{"double"};
+       }
        player1 = new Player(1, name1, 'X');
        player2 = new Player(2, name2, '0');
        String [] symbols = {"X", "0"};
@@ -68,11 +72,19 @@ public class GameController {
 
     @Operation(summary = "Запрос на отправку игрового хода игрока")
     @PostMapping ("/step")
-    public char[][] setStep (@RequestParam String name, @RequestParam int x, @RequestParam int y) {
+    public StepDto setStep (@RequestParam String name, @RequestParam int x, @RequestParam int y) {
+        StepDto stepDto = new StepDto();
+        if (field.getField()[x-1][y-1] != '-') {
+            stepDto.setField(field.getField());
+            stepDto.setStepPlayerName(name);
+            return stepDto;
+        }
         Player player = getPlayerByName(name);
         field.move(player, x, y);
         writerParser.stepGame(player, x, y);
-        return field.getField();
+        stepDto.setField(field.getField());
+        stepDto.setStepPlayerName(getAnotherPlayerName(name));
+        return stepDto;
     }
 
     private Player getPlayerByName (String name) {
@@ -80,6 +92,14 @@ public class GameController {
             return player1;
         if (player2.getName().equals(name))
             return player2;
+        return null;
+    }
+
+    private String getAnotherPlayerName (String name) {
+        if (player1.getName().equals(name))
+            return player2.getName();
+        if (player2.getName().equals(name))
+            return player1.getName();
         return null;
     }
 
