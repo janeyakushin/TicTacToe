@@ -2,97 +2,48 @@ package ru.yajaneya.tictactoe.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.yajaneya.tictactoe.Parser.ReaderParser;
-import ru.yajaneya.tictactoe.fabrics.HistoryFabric;
-import ru.yajaneya.tictactoe.models.Field;
-import ru.yajaneya.tictactoe.models.Player;
-import ru.yajaneya.tictactoe.models.Step;
+import ru.yajaneya.tictactoe.services.PlayService;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @Tag(name="API воспроизведения записанной игры 'Крестики-нолики'", description = "Методы работы с бэк-эндом воспроизведения записанной игры")
+@RequiredArgsConstructor
 public class PlayController {
-    private Player player1;
-    private Player player2;
-    private List<Step> steps;
-    private Player winPlayer;
-    private Field field;
-    private int step;
+    private final PlayService playService;
 
     @Operation(summary = "Запрос на получение списка записанных игр")
     @GetMapping("/games")
     public List<String> getGames () {
-        List<String> strings = new ArrayList<>();
-        File folder = new File("./arhiv");
-        File[] files = folder.listFiles();
-        if (files == null) {
-            return null;
-        }
-        for (File file : files) {
-            strings.add(file.getName());
-        }
-        return strings;
+        return playService.getGames();
     }
 
     @Operation(summary = "Запрос на инициализацию данных записанной игры")
     @GetMapping ("/game")
     public boolean getGame (@RequestParam String game) {
-        ReaderParser readerParser = new HistoryFabric().getReadParser(); //устанавливается парсес чтения
-        if (!readerParser.init(new File("./arhiv/" + game)))
-            return false;
-        List<Player> players = readerParser.getPlayers();
-        steps = readerParser.getSteps();
-        if (steps == null) {
-            return false;
-        }
-        winPlayer = readerParser.getResult();
-        player1 = players.get(0);
-        player2 = players.get(1);
-        return true;
+        return playService.getGame(game);
     }
 
     @Operation(summary = "Запрос на получение имен игроков и символов, им соответствующих, из записанной игры")
     @GetMapping ("/game/players")
     public List<String> getPlayers () {
-        List<String> players = new ArrayList<>();
-        players.add(player1.getName() + " -> " + player1.getSymbol());
-        players.add(player2.getName() + " -> " + player2.getSymbol());
-        return players;
+        return playService.getPlayers();
     }
 
     @Operation(summary = "Запрос на получение пустого игрового поля")
     @GetMapping ("/game/init")
     public char[][] init () {
-        field = new Field();
-        return field.getField();
+        return playService.init();
     }
 
     @Operation(summary = "Запрос на получение поля, соответствующего определенному шагу игры")
     @GetMapping ("/game/step")
     public char[][] getStep (@RequestParam int step) {
-        if (step > steps.size()) {
-            char[][] c = new char[1][1];
-            c[0][0] = 'q';
-            return c;
-        }
-        Step nextStep = steps.get(step-1);
-        field.move(getPlayerById(nextStep.getPlayerId()), nextStep.getX(), nextStep.getY());
-        return field.getField();
+        return playService.getStep(step);
     }
-
-    private Player getPlayerById (int id) {
-        if (player1.getId() == id)
-            return player1;
-        if (player2.getId() == id)
-            return player2;
-        return null;
-    }
-
 
 }
