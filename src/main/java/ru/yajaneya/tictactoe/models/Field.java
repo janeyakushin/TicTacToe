@@ -4,6 +4,8 @@
 
 package ru.yajaneya.tictactoe.models;
 
+import ru.yajaneya.tictactoe.config.Config;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -13,9 +15,6 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Field {
-    private final String SYMBOL_WALL = "|"; // символ, обозначающий стенку
-    private final char SYMBOL_FIELD = '-'; // символ, обозначающий пустое поле
-    private final String RATING_FILE = "rating.txt"; //файл рейтинга игроков
     private int dotsToWin; // количество символов для победы
     private int fieldSize; // размер поля
     private char [][] field; // поле
@@ -43,7 +42,7 @@ public class Field {
     public void init () {
         for (int i = 0; i < fieldSize; i++) {
             for (int j = 0; j < fieldSize; j++) {
-                field[i][j] = SYMBOL_FIELD;
+                field[i][j] = Config.SYMBOL_FIELD;
             }
         }
     }
@@ -51,9 +50,9 @@ public class Field {
     public void draw () {
         for (int i = 0; i < fieldSize; i++) {
             for (int j = 0; j < fieldSize; j++) {
-                System.out.print(SYMBOL_WALL + field[i][j]);
+                System.out.print(Config.SYMBOL_WALL + field[i][j]);
             }
-            System.out.println(SYMBOL_WALL);
+            System.out.println(Config.SYMBOL_WALL);
         }
         System.out.println();
     }
@@ -72,7 +71,7 @@ public class Field {
     public boolean deadHeat () {
         for (int i = 0; i < fieldSize; i ++) {
             for (int j = 0; j < fieldSize; j++) {
-                if (field[i][j] == SYMBOL_FIELD)
+                if (field[i][j] == Config.SYMBOL_FIELD)
                     return false;
             }
         }
@@ -125,7 +124,7 @@ public class Field {
     }
 
     public boolean addToRating (Player player) {
-        File file = new File("." + File.separator + RATING_FILE);
+        File file = new File("." + File.separator + Config.RATING_FILE);
         try {
             if (!file.exists()) {
                 file.createNewFile();
@@ -151,7 +150,7 @@ public class Field {
      public boolean printRating () {
          System.out.println("Рейтинг игроков!!!");
          System.out.println("-------------------");
-         File file = new File("." + File.separator + RATING_FILE);
+         File file = new File("." + File.separator + Config.RATING_FILE);
          try {
              List<Player> players = getRating(file);
              for (Player player : players) {
@@ -165,7 +164,7 @@ public class Field {
     }
 
     public List<Player> getRating () throws IOException {
-        File file = new File("." + File.separator + RATING_FILE);
+        File file = new File("." + File.separator + Config.RATING_FILE);
         return getRating(file);
     }
 

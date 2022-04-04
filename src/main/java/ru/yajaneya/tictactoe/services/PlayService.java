@@ -7,34 +7,25 @@ import ru.yajaneya.tictactoe.models.Field;
 import ru.yajaneya.tictactoe.models.Player;
 import ru.yajaneya.tictactoe.models.Step;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class PlayService {
 
+    private ReaderParser readerParser;
     private Player player1;
     private Player player2;
     private List<Step> steps;
     private Field field;
 
     public List<String> getGames () {
-        List<String> strings = new ArrayList<>();
-        File folder = new File("./arhiv");
-        File[] files = folder.listFiles();
-        if (files == null) {
-            return null;
-        }
-        for (File file : files) {
-            strings.add(file.getName());
-        }
-        return strings;
+        readerParser = new HistoryFabric().getReadParser(); //устанавливается парсес чтения
+        return readerParser.getGames();
     }
 
     public boolean getGame (String game) {
-        ReaderParser readerParser = new HistoryFabric().getReadParser(); //устанавливается парсес чтения
-        if (!readerParser.init(new File("./arhiv/" + game)))
+        if (!readerParser.init(game))
             return false;
         List<Player> players = readerParser.getPlayers();
         steps = readerParser.getSteps();

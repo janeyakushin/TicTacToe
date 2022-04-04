@@ -1,19 +1,33 @@
 package ru.yajaneya.tictactoe.fabrics;
 
-import ru.yajaneya.tictactoe.Parser.ReaderParser;
-import ru.yajaneya.tictactoe.Parser.ReaderParserJson;
-import ru.yajaneya.tictactoe.Parser.WriterParser;
-import ru.yajaneya.tictactoe.Parser.WriterParserJson;
+import ru.yajaneya.tictactoe.Parser.*;
+import ru.yajaneya.tictactoe.config.Config;
 
 public class HistoryFabric {
 
-    public ReaderParser getReadParser () {
-//        return new DomReaderParserXml();
-        return new ReaderParserJson();
+    public ReaderParser getReadParser() {
+        switch (Config.FORMAT_DATA) {
+            case "xml":
+                return new DomReaderParserXml();
+            case "json":
+                return new ReaderParserJson();
+            case "db":
+                return new ReadParserDb();
+            default:
+                return null;
+        }
     }
 
-    public WriterParser getWriteParser () {
-//        return new FileWriterParserXml();
-        return new WriterParserJson();
+    public WriterParser getWriteParser() {
+        switch (Config.FORMAT_DATA) {
+            case "xml":
+                return new FileWriterParserXml();
+            case "json":
+                return new WriterParserJson();
+            case "db":
+                return new WriteParserDb();
+            default:
+                return null;
+        }
     }
 }

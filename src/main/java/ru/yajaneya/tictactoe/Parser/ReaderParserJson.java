@@ -13,6 +13,7 @@ import ru.yajaneya.tictactoe.models.Player;
 import ru.yajaneya.tictactoe.models.Step;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ReaderParserJson implements ReaderParser{
@@ -21,8 +22,22 @@ public class ReaderParserJson implements ReaderParser{
     private JsonGamePlay jsonGamePlay;
 
     @Override
-    public boolean init(File file) {
-        this.file = file;
+    public List<String> getGames() {
+        List<String> strings = new ArrayList<>();
+        File folder = new File("./arhiv");
+        File[] files = folder.listFiles(new FileExtFilter(".json"));
+        if (files == null) {
+            return null;
+        }
+        for (File file : files) {
+            strings.add(file.getName());
+        }
+        return strings;
+    }
+
+    @Override
+    public boolean init(String nameGame) {
+        this.file = new File("./arhiv/" + nameGame);
         try {
             InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(file), "windows-1251");
             BufferedReader fileReader = new BufferedReader(inputStreamReader);
@@ -53,5 +68,18 @@ public class ReaderParserJson implements ReaderParser{
     @Override
     public Player getResult() {
         return jsonGamePlay.getGameplay().getGameResult().getPlayerWin();
+    }
+
+    private class FileExtFilter implements FilenameFilter{
+
+        private String ext;
+
+        public FileExtFilter(String ext){
+            this.ext = ext.toLowerCase();
+        }
+        @Override
+        public boolean accept(File dir, String name) {
+            return name.toLowerCase().endsWith(ext);
+        }
     }
 }

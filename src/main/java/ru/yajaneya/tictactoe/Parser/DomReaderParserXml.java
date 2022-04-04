@@ -19,10 +19,11 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class DomReaderParserXml implements ReaderParser {
     File file;
@@ -30,51 +31,29 @@ public class DomReaderParserXml implements ReaderParser {
     PozitionAdapter pozitionAdapter;
 
     @Override
-    public boolean init(File file) {
-        this.file = file;
+    public List<String> getGames() {
+        List<String> strings = new ArrayList<>();
+        File folder = new File("./arhiv");
+        File[] files = folder.listFiles(new FileExtFilter(".xml"));
+        if (files == null) {
+            return null;
+        }
+        for (File file : files) {
+            strings.add(file.getName());
+        }
+        return strings;
+    }
+
+    @Override
+    public boolean init(String nameGame) {
+        this.file = new File("./arhiv/" + nameGame);
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             document = builder.parse(file);
-            return choiceTypePozition();
+            return true;
         } catch ( ParserConfigurationException | SAXException | IOException e) {
             return false;
-        }
-    }
-
-    private boolean choiceTypePozition() {
-        System.out.println("Поддерживаются следующие форматы записи координат в файле истории игры: ");
-        System.out.println("1 - x, y");
-        System.out.println("2 - x y");
-        System.out.println("3 - xy (размер поля не более 9х9)");
-        System.out.println("4 - нумерация ячеек в следующем виде: ");
-        System.out.println("    1 2 3 ");
-        System.out.println("    4 5 6 ");
-        System.out.println("    7 8 9 ");
-        System.out.println("5 - нет нужного формата");
-        System.out.println("---------------------------------------");
-        System.out.println("Укажите нужный формат: ");
-        Scanner scanner = new Scanner(System.in);
-        switch (scanner.nextInt()) {
-            case (1):
-                pozitionAdapter = new PozitionOne();
-                return true;
-            case (2):
-                pozitionAdapter = new PozitionTwo();
-                return true;
-            case (3):
-                pozitionAdapter = new PozitionThree();
-                return true;
-            case (4):
-                pozitionAdapter = new PozitionFour();
-                return true;
-            case (5):
-                System.out.println("Обратитесь к разработчику для добавления соответствующего модуля.");
-                return false;
-            default:
-                System.out.println("Такого варианта нет.");
-                System.out.println("Обратитесь к разработчику для добавления соответствующего модуля.");
-                return false;
         }
     }
 
@@ -110,7 +89,18 @@ public class DomReaderParserXml implements ReaderParser {
             }
 
             try {
-                int [] pozition = pozitionAdapter.getPozition(node.getTextContent());
+                String contentPozition = node.getTextContent();
+                if (Pattern.compile("\\d\\,\\d").matcher(contentPozition).find()) {
+                    pozitionAdapter = new PozitionOne();
+                } else if (Pattern.compile("\\d\\s\\d").matcher(contentPozition).find()) {
+                    pozitionAdapter = new PozitionTwo();
+                } else if (Pattern.compile("\\d").matcher(contentPozition).find()) {
+                    pozitionAdapter = new PozitionFour();
+                } else {
+                    throw new NumberFormatException();
+                }
+
+                int [] pozition = pozitionAdapter.getPozition(contentPozition);
                 x = pozition[0];
                 y = pozition[1];
             } catch (NumberFormatException e) {
@@ -155,4 +145,18 @@ public class DomReaderParserXml implements ReaderParser {
         }
         return new Player(id, name, symbol);
     }
+
+    private class FileExtFilter implements FilenameFilter {
+
+        private String ext;
+
+        public FileExtFilter(String ext){
+            this.ext = ext.toLowerCase();
+        }
+        @Override
+        public boolean accept(File dir, String name) {
+            return name.toLowerCase().endsWith(ext);
+        }
+    }
+
 }

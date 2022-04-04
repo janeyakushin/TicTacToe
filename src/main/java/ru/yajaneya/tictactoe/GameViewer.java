@@ -33,7 +33,7 @@ public class GameViewer {
 
     public static void viewer(File file) {
         ReaderParser readerParser = new HistoryFabric().getReadParser(); //устанавливается парсес чтения
-        if (!readerParser.init(file)) return;
+        if (!readerParser.init(file.getName())) return;
         List<Player> players = readerParser.getPlayers();
         List<Step> steps = readerParser.getSteps();
         if (steps == null) {
