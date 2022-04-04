@@ -1,5 +1,6 @@
 package ru.yajaneya.tictactoe.services;
 
+import lombok.Data;
 import org.springframework.stereotype.Service;
 import ru.yajaneya.tictactoe.Parser.WriterParser;
 import ru.yajaneya.tictactoe.dtos.StepDto;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Service
+@Data
 public class GameService {
     private WriterParser writerParser;
     private Field field;
