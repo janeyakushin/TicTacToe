@@ -8,6 +8,7 @@
 package ru.yajaneya.tictactoe.Parser;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ru.yajaneya.tictactoe.config.Config;
 import ru.yajaneya.tictactoe.models.JsonGamePlay;
 import ru.yajaneya.tictactoe.models.Player;
 import ru.yajaneya.tictactoe.models.Step;
@@ -24,7 +25,7 @@ public class ReaderParserJson implements ReaderParser{
     @Override
     public List<String> getGames() {
         List<String> strings = new ArrayList<>();
-        File folder = new File("./arhiv");
+        File folder = new File(Config.ARHIV_DIR);
         File[] files = folder.listFiles(new FileExtFilter(".json"));
         if (files == null) {
             return null;
@@ -37,7 +38,7 @@ public class ReaderParserJson implements ReaderParser{
 
     @Override
     public boolean init(String nameGame) {
-        this.file = new File("./arhiv/" + nameGame);
+        this.file = new File(Config.ARHIV_DIR + nameGame);
         try {
             InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(file), "windows-1251");
             BufferedReader fileReader = new BufferedReader(inputStreamReader);

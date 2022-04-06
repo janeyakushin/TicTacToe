@@ -9,6 +9,7 @@
 package ru.yajaneya.tictactoe;
 
 import ru.yajaneya.tictactoe.Parser.ReaderParser;
+import ru.yajaneya.tictactoe.config.Config;
 import ru.yajaneya.tictactoe.fabrics.HistoryFabric;
 import ru.yajaneya.tictactoe.models.Field;
 import ru.yajaneya.tictactoe.models.Player;
@@ -22,7 +23,7 @@ public class GameViewer {
 
     public static void main(String[] args) {
 
-        JFileChooser fileopen = new JFileChooser("./arhiv/");
+        JFileChooser fileopen = new JFileChooser(Config.ARHIV_DIR);
         int ret = fileopen.showDialog(null, "Открыть файл");
         if (ret == JFileChooser.APPROVE_OPTION) {
            File file = fileopen.getSelectedFile();

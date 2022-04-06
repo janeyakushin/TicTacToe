@@ -12,6 +12,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import ru.yajaneya.tictactoe.Parser.pozitionAdapter.*;
+import ru.yajaneya.tictactoe.config.Config;
 import ru.yajaneya.tictactoe.models.Player;
 import ru.yajaneya.tictactoe.models.Step;
 
@@ -33,7 +34,7 @@ public class DomReaderParserXml implements ReaderParser {
     @Override
     public List<String> getGames() {
         List<String> strings = new ArrayList<>();
-        File folder = new File("./arhiv");
+        File folder = new File(Config.ARHIV_DIR);
         File[] files = folder.listFiles(new FileExtFilter(".xml"));
         if (files == null) {
             return null;
@@ -46,7 +47,7 @@ public class DomReaderParserXml implements ReaderParser {
 
     @Override
     public boolean init(String nameGame) {
-        this.file = new File("./arhiv/" + nameGame);
+        this.file = new File(Config.ARHIV_DIR + nameGame);
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
